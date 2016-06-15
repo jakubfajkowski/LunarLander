@@ -1,0 +1,12 @@
+GROUND_POS               0 100;1024 100
+
+LANDING_SPOT_POS         260 150
+LANDING_SPOT_WIDTH       100
+
+GRAVITY_CONSTANT         10
+MAX_VERTICAL_VEL         120
+MAX_HORIZONTAL_VEL       120
+VISCOSITY                10
+FUEL                     1000
+
+START_POS                312 768
