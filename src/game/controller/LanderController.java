@@ -32,8 +32,25 @@ public class LanderController{
     }
 
     public void move(Vector vector) {
-        if(burnFuel())
+        if(burnFuel()){
+            triggerBoosters(vector);
             lander.getVelocityVector().add(vector);
+        }
+    }
+
+    private void triggerBoosters(Vector vector){
+        if (vector.getY() > 0){
+            lander.setLeftBoosterWorking(true);
+            lander.setRightBoosterWorking(true);
+        }
+
+        if (vector.getX() > 0){
+            lander.setLeftBoosterWorking(true);
+        }
+
+        if (vector.getX() < 0){
+            lander.setRightBoosterWorking(true);
+        }
     }
 
     public boolean burnFuel() {

@@ -10,6 +10,8 @@ public class Lander {
     private Vector velocityVector;
     private boolean crashed;
     private boolean landed;
+    private boolean leftBoosterWorking;
+    private boolean rightBoosterWorking;
 
 
     public Lander(String configurationFileName){
@@ -81,5 +83,21 @@ public class Lander {
 
     public void setLanded(boolean landed) {
         this.landed = landed;
+    }
+
+    public boolean isLeftBoosterWorking() {
+        return leftBoosterWorking;
+    }
+
+    public void setLeftBoosterWorking(boolean leftBoosterWorking) {
+        this.leftBoosterWorking = leftBoosterWorking;
+    }
+
+    public boolean isRightBoosterWorking() {
+        return rightBoosterWorking;
+    }
+
+    public void setRightBoosterWorking(boolean rightBoosterWorking) {
+        this.rightBoosterWorking = rightBoosterWorking;
     }
 }

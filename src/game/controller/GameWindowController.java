@@ -14,9 +14,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 public class GameWindowController extends JPanel implements Runnable, ActionListener {
+    private static final String UP = "Up";
+    private static final String LEFT = "Left";
+    private static final String RIGHT = "Right";
     private static final String PRESSED = "Pressed";
     private static final String RELEASED = "Released";
     private static final String PAUSE = "Pause";
@@ -28,6 +32,7 @@ public class GameWindowController extends JPanel implements Runnable, ActionList
     private HashMap<Direction, Boolean> directionMap = new HashMap<>();
 
     public GameWindowController(String configurationFileName, Player player){
+        this.setDoubleBuffered(true);
         this.setBackground(Color.black); //todo teksturka z gwiazdami
         this.gameWindow = new GameWindow(configurationFileName, player);
         this.landerController = new LanderController(gameWindow.getLander(), this);
@@ -41,6 +46,8 @@ public class GameWindowController extends JPanel implements Runnable, ActionList
             directionMap.put(direction, false);
         }
         bindKeys();
+
+
     }
 
     private void bindKeys(){
@@ -150,6 +157,7 @@ public class GameWindowController extends JPanel implements Runnable, ActionList
     }
 
     public void stopGame(){
+        currentThread.interrupt();
         currentThread = null;
     }
 
@@ -183,6 +191,8 @@ public class GameWindowController extends JPanel implements Runnable, ActionList
                 stopGame();
                 gameWindow.getPlayer().loseLife();
 
+                JOptionPane.showMessageDialog(MainWindow.getInstance(), "You've lost a life.", "Crashed", JOptionPane.WARNING_MESSAGE);
+
                 if(gameWindow.getPlayer().getLivesLeft() == 0){
 
                     Object[] options = {"Tak", "Nie"};
@@ -204,8 +214,8 @@ public class GameWindowController extends JPanel implements Runnable, ActionList
             case "land":
                 gameWindow.setScore(gameWindow.getScore() + 10000);
                 stopGame();
+                JOptionPane.showMessageDialog(MainWindow.getInstance(), "You've landed safely.", "Landed", JOptionPane.PLAIN_MESSAGE);
                 MainWindow.getInstance().nextLevel();
-
                 break;
         }
     }
