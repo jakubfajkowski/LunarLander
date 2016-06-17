@@ -2,6 +2,9 @@ package game.model.environment;
 
 import game.model.GameWindow;
 import game.model.Point;
+import gui.MainWindow;
+import loader.ClientException;
+import sun.applet.Main;
 
 import java.util.ArrayList;
 import java.util.Properties;
@@ -20,7 +23,12 @@ public class Map {
 
     public Map(String mapFileName)
     {
-        Properties properties = loadFromLocalFile("/maps" + mapFileName);
+        Properties properties;
+        try {
+            properties = MainWindow.getInstance().getClient().getMapFromServer(mapFileName);
+        } catch (ClientException e) {
+            properties = loadFromLocalFile("maps/" + mapFileName);
+        }
 
         String[] pointValues = properties.getProperty("GROUND_POS").split(";");
         ArrayList<Point> points = initializeGroundPoints(pointValues);

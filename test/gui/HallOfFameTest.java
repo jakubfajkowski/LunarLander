@@ -1,6 +1,7 @@
 package gui;
 
 import game.model.Player;
+import loader.HallOfFame;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

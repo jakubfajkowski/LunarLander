@@ -1,5 +1,6 @@
 package loader;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -8,9 +9,9 @@ public class PropertiesLoader {
     public static Properties loadFromLocalFile(String fileName){
         Properties properties = null;
         try {
-            properties = loadFromInputStream(PropertiesLoader.class.getResourceAsStream(fileName));
+            properties = loadFromInputStream(PropertiesLoader.class.getResourceAsStream("/" + fileName));
         } catch (NullPointerException e) {
-            //TODO okienko z errorem
+            JOptionPane.showMessageDialog(new JFrame(), e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
 
         return properties;
@@ -21,7 +22,7 @@ public class PropertiesLoader {
         try {
             properties.load(inputStream);
         } catch (IOException e) {
-            //TODO okienko z errorem
+            JOptionPane.showMessageDialog(new JFrame(), e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
 
         return properties;

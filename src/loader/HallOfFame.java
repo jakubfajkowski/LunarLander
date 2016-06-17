@@ -1,4 +1,4 @@
-package gui;
+package loader;
 
 import game.model.Player;
 

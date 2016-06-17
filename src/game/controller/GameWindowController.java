@@ -2,6 +2,7 @@ package game.controller;
 
 import game.model.*;
 import game.model.Point;
+import game.model.Vector;
 import game.model.environment.Map;
 import game.view.GameWindowRenderer;
 import game.view.MapRenderer;
@@ -10,17 +11,16 @@ import gui.Language;
 import gui.MainWindow;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
+import java.util.*;
 
-public class GameWindowController extends JPanel implements Runnable, ActionListener {
-    private static final String UP = "Up";
-    private static final String LEFT = "Left";
-    private static final String RIGHT = "Right";
+import static javax.swing.SwingUtilities.invokeLater;
+
+public class GameWindowController extends JPanel implements ActionListener {
     private static final String PRESSED = "Pressed";
     private static final String RELEASED = "Released";
     private static final String PAUSE = "Pause";
@@ -28,19 +28,19 @@ public class GameWindowController extends JPanel implements Runnable, ActionList
     private GameWindow gameWindow;
     private LanderController landerController;
     private GameWindowRenderer gameWindowRenderer;
-    private Thread currentThread;
+    private Timer timer;
     private HashMap<Direction, Boolean> directionMap = new HashMap<>();
 
     public GameWindowController(String configurationFileName, Player player){
         this.setDoubleBuffered(true);
-        this.setBackground(Color.black); //todo teksturka z gwiazdami
+        this.setBackground(Color.black);
         this.gameWindow = new GameWindow(configurationFileName, player);
         this.landerController = new LanderController(gameWindow.getLander(), this);
         this.gameWindowRenderer = new GameWindowRenderer(gameWindow,
                 new MapRenderer(gameWindow.getMap()),
                 new StatsRenderer(gameWindow.getStats()));
 
-        this.currentThread = null;
+        this.timer = new Timer(10, new TimerListener());
 
         for (Direction direction : Direction.values()) {
             directionMap.put(direction, false);
@@ -135,16 +135,13 @@ public class GameWindowController extends JPanel implements Runnable, ActionList
         stats.setHorizontalVelocity(lander.getVelocityVector().getX()*100);
         stats.setVerticalVelocity(lander.getVelocityVector().getY()*100);
         stats.setScore(stats.getScore() - 5);
-        stats.setLevelName(gameWindow.getConfigurationFileName().split("/")[1]);
+        stats.setLevelName(gameWindow.getConfigurationFileName());
         stats.setLives(gameWindow.getPlayer().getLivesLeft());
     }
 
     private void pause(){
-        if(currentThread != null){
-            gameWindow.getStats().setCommunicate("PAUSED");
-            repaint();
+        if(timer.isRunning()){
             stopGame();
-            gameWindow.getStats().deleteCommunicate();
         }
         else{
             startGame();
@@ -152,35 +149,11 @@ public class GameWindowController extends JPanel implements Runnable, ActionList
     }
 
     public void startGame(){
-        currentThread = new Thread(this);
-        currentThread.start();
+        timer.start();
     }
 
     public void stopGame(){
-        currentThread.interrupt();
-        currentThread = null;
-    }
-
-    @Override
-    public void run() {
-        Thread thisThread = currentThread;
-        while (thisThread == currentThread) {
-
-            if(gameWindow.getScore() > 0) gameWindow.setScore(gameWindow.getScore() - 5);
-            landerController.freeFall(gameWindow.getMap().getGravitationalAcceleration());
-
-            for (Direction direction : Direction.values()) {
-                if (directionMap.get(direction)) {
-                    landerController.move(direction.getVector());
-                }
-            }
-            landerController.updatePosition(gameWindow.getMap().getViscosity());
-            checkCollisions();
-            updateStats();
-
-            repaint();
-            try { Thread.sleep(10); } catch (Exception e) {}
-        }
+        timer.stop();
     }
 
     @Override
@@ -189,6 +162,7 @@ public class GameWindowController extends JPanel implements Runnable, ActionList
         switch(e.getActionCommand()){
             case "crash":
                 stopGame();
+                forceRepaint();
                 gameWindow.getPlayer().loseLife();
 
                 JOptionPane.showMessageDialog(MainWindow.getInstance(), "You've lost a life.", "Crashed", JOptionPane.WARNING_MESSAGE);
@@ -212,12 +186,24 @@ public class GameWindowController extends JPanel implements Runnable, ActionList
                 break;
 
             case "land":
-                gameWindow.setScore(gameWindow.getScore() + 10000);
                 stopGame();
+                forceRepaint();
+                gameWindow.setScore(gameWindow.getScore() + 10000);
+                gameWindow.getPlayer().appendScore(gameWindow.getScore());
                 JOptionPane.showMessageDialog(MainWindow.getInstance(), "You've landed safely.", "Landed", JOptionPane.PLAIN_MESSAGE);
                 MainWindow.getInstance().nextLevel();
                 break;
         }
+    }
+
+    private void forceRepaint(){
+        repaint();
+        invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                    repaint();
+            }
+        });
     }
 
     private void retry() {
@@ -264,7 +250,22 @@ public class GameWindowController extends JPanel implements Runnable, ActionList
         return false;
     }
 
-    public GameWindow getGameWindow() {
-        return gameWindow;
+    private class TimerListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(gameWindow.getScore() > 0) gameWindow.setScore(gameWindow.getScore() - 5);
+            landerController.freeFall(gameWindow.getMap().getGravitationalAcceleration());
+
+            for (Direction direction : Direction.values()) {
+                if (directionMap.get(direction)) {
+                    landerController.move(direction.getVector());
+                }
+            }
+            landerController.updatePosition(gameWindow.getMap().getViscosity());
+            checkCollisions();
+            updateStats();
+
+            repaint();
+        }
     }
 }

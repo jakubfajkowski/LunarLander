@@ -1,8 +1,12 @@
 package game.model;
 
+import gui.MainWindow;
+import loader.ClientException;
 import loader.PropertiesLoader;
 
 import java.util.Properties;
+
+import static loader.PropertiesLoader.loadFromLocalFile;
 
 public class Lander {
     private Point position;
@@ -15,7 +19,12 @@ public class Lander {
 
 
     public Lander(String configurationFileName){
-        Properties properties = PropertiesLoader.loadFromLocalFile("/maps" + configurationFileName);
+        Properties properties;
+        try {
+            properties = MainWindow.getInstance().getClient().getMapFromServer(configurationFileName);
+        } catch (ClientException e) {
+            properties = loadFromLocalFile("maps/" + configurationFileName);
+        }
 
         this.fuel = Double.parseDouble(properties.getProperty("FUEL"));
         this.position = new Point(properties.getProperty("START_POS"));

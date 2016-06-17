@@ -3,15 +3,16 @@ package gui;
 import game.controller.GameWindowController;
 import game.model.Player;
 import gui.menu.MenuWindowBuilder;
-import game.model.GameWindow;
-import loader.LevelLoader;
-import loader.LevelLoaderException;
+import loader.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 public class MainWindow extends JFrame implements ActionListener
 {
@@ -32,6 +33,8 @@ public class MainWindow extends JFrame implements ActionListener
 
     private GameWindowController gameWindowController;
 
+    private Client client;
+
     private JPanel createCardHolderPanel() {
         cardHolder = new JPanel(new CardLayout());
 
@@ -43,8 +46,6 @@ public class MainWindow extends JFrame implements ActionListener
     }
 
     public void nextLevel(){
-        currentPlayer.appendScore(gameWindowController.getGameWindow().getScore());
-
         try {
             levelLoader.loadNextLevel();
             String currentLevel = levelLoader.getCurrentLevelName();
@@ -78,11 +79,16 @@ public class MainWindow extends JFrame implements ActionListener
                 cardLayout.show(cardHolder, Language.MAIN_MENU);
                 break;
             case Language.START_GAME:
-                createNewPlayer();
-                if(currentPlayer.getName() != null)
-                {
-                    levelLoader = new LevelLoader();
-                    showCurrentLevelCard(levelLoader.getCurrentLevelName());
+                try {
+                    this.client = new Client();
+                    createNewPlayer();
+                    if(currentPlayer.getName() != null)
+                    {
+                        levelLoader = new LevelLoader();
+                        showCurrentLevelCard(levelLoader.getCurrentLevelName());
+                    }
+                } catch (ClientException e1) {
+                    JOptionPane.showMessageDialog(this, e1.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
                 }
                 break;
             case Language.HALL_OF_FAME:
@@ -101,6 +107,26 @@ public class MainWindow extends JFrame implements ActionListener
             case Language.BACK:
                 cardLayout.show(cardHolder, Language.START_GAME);
                 break;
+            case Language.NETWORK_SETTINGS:
+                changeNetworkSettings();
+                break;
+        }
+    }
+
+    private void changeNetworkSettings(){
+        String[] value = JOptionPane.showInputDialog(this, Language.NETWORK_SETTINGS, "IP:PORT").split(":");
+        Properties properties = new Properties();
+        properties.put("IP", value[0]);
+        properties.put("PORT", value[1]);
+        try {
+            properties.store(new FileOutputStream("./netconfig"), null);
+        } catch (IOException e1) {
+            JOptionPane.showMessageDialog(this, e1.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+        }
+        try {
+            client = new Client();
+        } catch (ClientException e1) {
+            JOptionPane.showMessageDialog(this, e1.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -138,4 +164,7 @@ public class MainWindow extends JFrame implements ActionListener
         return bestScores;
     }
 
+    public Client getClient() {
+        return client;
+    }
 }

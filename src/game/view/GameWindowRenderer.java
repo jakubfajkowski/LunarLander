@@ -20,8 +20,8 @@ public class GameWindowRenderer implements Renderable {
         this.mapRenderer = mapRenderer;
         this.statsRenderer = statsRenderer;
 
-        crashedLanderImage = ImageLoader.loadImage("crashed.gif");
-        landedLanderImage = ImageLoader.loadImage("landed.gif");
+        crashedLanderImage = ImageLoader.loadImage("crashed.png");
+        landedLanderImage = ImageLoader.loadImage("landed.png");
     }
 
 
@@ -37,6 +37,11 @@ public class GameWindowRenderer implements Renderable {
 
         int xCenter = (int) lander.getPosition().getX();
         int yCenter = (int)(GameWindow.HEIGHT - lander.getPosition().getY());
+
+        if(lander.isLanded()){
+            g.drawImage(landedLanderImage,
+                    xCenter-32,yCenter-17,null);
+        }
 
         g.setColor(Color.white);
         g.drawLine(xCenter-5, yCenter+5, xCenter-10, yCenter+15);
@@ -63,10 +68,6 @@ public class GameWindowRenderer implements Renderable {
             g.drawImage(crashedLanderImage,
                     xCenter-32,yCenter-32,null);
 
-        }
-        if(lander.isLanded()){
-            g.drawImage(landedLanderImage,
-                    xCenter-32,yCenter-32,null);
         }
 
         lander.setLeftBoosterWorking(false);

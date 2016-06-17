@@ -1,20 +1,23 @@
 package loader;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 
 public class ImageLoader {
     static public Image loadImage(String imageName) {
         Image image = null;
-        URL imageURL = ImageLoader.class.getResource("/" + imageName);
+        InputStream inputStream = ImageLoader.class.getResourceAsStream("/" + imageName);
 
         try{
-            image = new ImageIcon(imageURL).getImage();
+            image = ImageIO.read(inputStream);
         }
-        catch(NullPointerException e){
+        catch(IOException e){
             JOptionPane.showMessageDialog(new JFrame(), e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
 

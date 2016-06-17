@@ -1,5 +1,7 @@
 import gui.MainWindow;
 
+import java.io.IOException;
+
 /**
  * Ta klasa reprezentuje <i>główną klasę programu </i>
  *

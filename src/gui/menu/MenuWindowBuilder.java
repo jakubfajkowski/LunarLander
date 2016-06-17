@@ -154,7 +154,7 @@ public class MenuWindowBuilder {
     }
 
     static private void addHallOfFameList(JPanel panel){
-        MainWindow.getInstance().getBestScores().loadFromFile("/bestscores.txt");
+        MainWindow.getInstance().getBestScores().loadFromFile("bestscores");
         for (String record: MainWindow.getInstance().getBestScores().toScoresList()) {
             panel.add(createSubtitle(record));
         }
@@ -180,13 +180,7 @@ public class MenuWindowBuilder {
 
         centralPanel.setLayout(centralPanelLayout);
 
-        JButton current_button = connectButtonToMainWindow(Language.MUSIC);
-        centralPanel.add(current_button);
-
-        current_button = connectButtonToMainWindow(Language.SOUND_EFFECTS);
-        centralPanel.add(current_button);
-
-        current_button = connectButtonToMainWindow(Language.LANGUAGE);
+        JButton current_button = connectButtonToMainWindow(Language.LANGUAGE);
         centralPanel.add(current_button);
 
         current_button = connectButtonToMainWindow(Language.NETWORK_SETTINGS);
@@ -202,7 +196,7 @@ public class MenuWindowBuilder {
     static public MenuWindow buildCurrentLevelWindow(Player player, String levelName){
         return new MenuWindow(createHeaderPanel(
                 Language.HELLO + " " + player.getName() + "!"
-                        + " Poziom: " + levelName.split("/")[1] + ". Wynik: " + player.getScore()),
+                        + " Poziom: " + levelName + ". Wynik: " + player.getScore()),
                 createCurrentLevelWindowCentralPanel(),
                 createFooterPanel());
     }

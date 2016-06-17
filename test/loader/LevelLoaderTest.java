@@ -18,8 +18,8 @@ public class LevelLoaderTest {
         }
         String actualMapName2 = levelLoader.getCurrentLevelName();
 
-        String expectedMapName1 = "/Nice Map";
-        String expectedMapName2 = "/Pretty Nice Map";
+        String expectedMapName1 = "/1";
+        String expectedMapName2 = "/Pretty 1";
 
         assertTrue(expectedMapName1.equals(actualMapName1));
         assertTrue(expectedMapName2.equals(actualMapName2));
