@@ -114,20 +114,25 @@ public class MainWindow extends JFrame implements ActionListener
     }
 
     private void changeNetworkSettings(){
-        String[] value = JOptionPane.showInputDialog(this, Language.NETWORK_SETTINGS, "IP:PORT").split(":");
-        Properties properties = new Properties();
-        properties.put("IP", value[0]);
-        properties.put("PORT", value[1]);
-        try {
-            properties.store(new FileOutputStream("./netconfig"), null);
-        } catch (IOException e1) {
-            JOptionPane.showMessageDialog(this, e1.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+        String value = JOptionPane.showInputDialog(this, Language.NETWORK_SETTINGS, "IP:PORT");
+        if(value != null){
+           String[] splittedValue = value.split(":");
+
+            Properties properties = new Properties();
+            properties.put("IP", splittedValue[0]);
+            properties.put("PORT", splittedValue[1]);
+            try {
+                properties.store(new FileOutputStream("./netconfig"), null);
+            } catch (IOException e1) {
+                JOptionPane.showMessageDialog(this, e1.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+            }
+            try {
+                client = new Client();
+            } catch (ClientException e1) {
+                JOptionPane.showMessageDialog(this, e1.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+            }
         }
-        try {
-            client = new Client();
-        } catch (ClientException e1) {
-            JOptionPane.showMessageDialog(this, e1.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
-        }
+
     }
 
     private void createNewPlayer(){
@@ -154,6 +159,11 @@ public class MainWindow extends JFrame implements ActionListener
         this.setMinimumSize(new Dimension(640, 480));
         this.setPreferredSize(new Dimension(1024, 768));
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        try {
+            this.client = new Client();
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
         this.bestScores = new HallOfFame();
         this.add(this.createCardHolderPanel());
         this.pack();

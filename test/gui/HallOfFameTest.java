@@ -12,7 +12,7 @@ public class HallOfFameTest {
     @Test
     public void testLoadFromFile() throws Exception {
         HallOfFame hallOfFame = new HallOfFame();
-        hallOfFame.loadFromFile("/bestscores.txt");
+        hallOfFame.loadFromFile();
         String[] actualScores = hallOfFame.toScoresList();
 
 
@@ -36,7 +36,7 @@ public class HallOfFameTest {
     @Test
     public void testAddRecord() throws Exception {
         HallOfFame hallOfFame = new HallOfFame();
-        hallOfFame.loadFromFile("/bestscores.txt");
+        hallOfFame.loadFromFile();
         Player playerToAdd = new Player("FFF", 109);
         hallOfFame.addRecord(playerToAdd);
         String[] actualScores = hallOfFame.toScoresList();

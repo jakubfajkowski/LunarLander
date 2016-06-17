@@ -154,7 +154,7 @@ public class MenuWindowBuilder {
     }
 
     static private void addHallOfFameList(JPanel panel){
-        MainWindow.getInstance().getBestScores().loadFromFile("bestscores");
+        MainWindow.getInstance().getBestScores().loadFromFile();
         for (String record: MainWindow.getInstance().getBestScores().toScoresList()) {
             panel.add(createSubtitle(record));
         }

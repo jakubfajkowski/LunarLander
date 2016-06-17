@@ -20,17 +20,40 @@ import java.util.*;
 
 import static javax.swing.SwingUtilities.invokeLater;
 
+/**
+ * Klasa sterownika okna gry.
+ */
 public class GameWindowController extends JPanel implements ActionListener {
     private static final String PRESSED = "Pressed";
     private static final String RELEASED = "Released";
     private static final String PAUSE = "Pause";
 
+    /**
+     * Widok okna gry.
+     */
     private GameWindow gameWindow;
+    /**
+     * Sterownik lądownika
+     */
     private LanderController landerController;
+    /**
+     * Widok okna gry
+     */
     private GameWindowRenderer gameWindowRenderer;
+    /**
+     * Czasomierz.
+     */
     private Timer timer;
+    /**
+     * Mapa kierunków ruchu.
+     */
     private HashMap<Direction, Boolean> directionMap = new HashMap<>();
 
+    /**
+     * Konstruktor domyślny
+     * @param configurationFileName nazwa pliku konfiguracyjnego
+     * @param player nazwa gracza
+     */
     public GameWindowController(String configurationFileName, Player player){
         this.setDoubleBuffered(true);
         this.setBackground(Color.black);

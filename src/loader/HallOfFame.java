@@ -1,6 +1,7 @@
 package loader;
 
 import game.model.Player;
+import gui.MainWindow;
 
 import java.util.*;
 
@@ -9,8 +10,13 @@ import static loader.PropertiesLoader.loadFromLocalFile;
 public class HallOfFame{
     ArrayList<Player> players = new ArrayList<>(10);
 
-    public void loadFromFile(String resourceName){
-        Properties properties = loadFromLocalFile(resourceName);
+    public void loadFromFile(){
+        Properties properties;
+        try {
+            properties = MainWindow.getInstance().getClient().getHallOfFameFromServer();
+        } catch (ClientException e) {
+            properties = loadFromLocalFile("bestscores");
+        }
 
         Enumeration e = properties.propertyNames();
 
@@ -35,6 +41,12 @@ public class HallOfFame{
         }
 
         sortPlayers();
+
+        try {
+            MainWindow.getInstance().getClient().sendRecordToServer(player);
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
     }
 
     public String[] toScoresList() {
